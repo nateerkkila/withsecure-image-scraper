@@ -1,0 +1,27 @@
+# Python Virtual Environments
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Project output files
+downloaded_images/
+
+# Ignore other potential output directories
+google_logos/
+*_images/
+
+# Editor and OS-specific files
+.idea/
+.vscode/
+.DS_Store
+
+# Files related to package building/distribution
+dist/
+build/
+*.egg-info/
