@@ -29,30 +29,12 @@ def get_image_urls(page_url: str) -> List[str]:
     image_urls = set() # Set to handle duplicates.
 
     for img_tag in soup.find_all('img'):
-        if 'src' in img_tag.attrs:
+        if 'src' in img_tag.attrs: # Note: not currently handling lazy loaded images..
             src = img_tag['src']
-            if not src: 
+            if not src or src.startswith('data:'): # skip data URIs (not downloadable)
                 continue
             
             absolute_url = urljoin(page_url, src)
             image_urls.add(absolute_url)
 
     return list(image_urls)
-
-
-# Just to test, to be removed...
-# if __name__ == '__main__':
-
-
-#     test_url = "https://devguide.python.org/versions/" 
-    
-#     print(f"Attempting to scrape images from: {test_url}")
-    
-#     found_urls = get_image_urls(test_url)
-    
-#     if found_urls:
-#         print(f"\nSuccessfully found {len(found_urls)} image URLs:")
-#         for url in found_urls:
-#             print(url)
-#     else:
-#         print("\nNo image URLs were found or an error occurred.")
