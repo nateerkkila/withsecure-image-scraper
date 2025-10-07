@@ -100,3 +100,49 @@ def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
     }
 
     assert set(actual_urls) == expected_urls
+
+
+def test_get_image_urls_from_srcset_and_picture_tags(mocker, mock_response_class):
+    """
+    Tests that URLs are correctly extracted from `srcset` attributes within
+    <img> and <source> tags, often found in <picture> elements.
+    """
+    test_html = """
+    <html>
+        <body>
+            <!-- A common responsive image pattern -->
+            <picture>
+              <source srcset="/images/logo-large.webp 2x, /images/logo-small.webp 1x">
+              <img src="/images/logo-fallback.png"
+              srcset="https://example.com/images/logo-fallback-2x.png 2x">
+            </picture>
+
+            <!-- An img tag with only srcset -->
+            <img srcset="img1.jpg 100w, img2.jpg 200w">
+
+            <!-- A duplicate URL to ensure it's handled correctly by the set -->
+            <img src="/images/logo-large.webp">
+        </body>
+    </html>
+    """
+    base_url = "https://example.com"
+
+    mock_get = mocker.patch("requests.get")
+    mock_get.return_value = mock_response_class(text=test_html)
+
+    actual_urls = get_image_urls(base_url)
+
+    expected_urls = {
+        # From the <source> srcset
+        "https://example.com/images/logo-large.webp",
+        "https://example.com/images/logo-small.webp",
+        # From the <img> src
+        "https://example.com/images/logo-fallback.png",
+        # From the <img> srcset
+        "https://example.com/images/logo-fallback-2x.png",
+        # From the second <img> srcset
+        "https://example.com/img1.jpg",
+        "https://example.com/img2.jpg",
+    }
+
+    assert set(actual_urls) == expected_urls
