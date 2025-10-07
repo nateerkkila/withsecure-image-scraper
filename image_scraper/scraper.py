@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-from typing import List, Optional
+from typing import List
 
 
 def get_image_urls(page_url: str) -> List[str]:

@@ -12,7 +12,8 @@ def main():
     """
     # Set up the argument parser
     parser = argparse.ArgumentParser(
-        description="A command-line tool to fetch and download all static images from a webpage."
+        description="A command-line tool to fetch and download all "
+        "static images from a webpage."
     )
 
     parser.add_argument(

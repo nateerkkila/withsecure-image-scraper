@@ -1,0 +1,6 @@
+[flake8]
+# Set the max line length to 88 to match black's default.
+max-line-length = 88
+
+# Ignore a specific error (E203) that is known to conflict with black's formatting style.
+extend-ignore = E203

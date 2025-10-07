@@ -1,11 +1,11 @@
-import pytest
 import requests
 from image_scraper.scraper import get_image_urls
 
 
 def test_get_image_urls_success(mocker, mock_response_class):
     """
-    Tests that the function extracts expected image URLs, ignoring duplicates and empty src tags.
+    Tests that the function extracts expected image URLs,
+    ignoring duplicates and empty src tags.
     """
     test_html = """
     <html>
@@ -66,7 +66,8 @@ def test_get_image_urls_no_images_found(mocker, mock_response_class):
 
 def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
     """
-    Tests that the scraper correctly handles various URL formats and ignores invalid ones.
+    Tests that the scraper correctly handles various URL formats
+    and ignores invalid ones.
     """
     test_html = """
     <html>
@@ -78,7 +79,8 @@ def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
             <!-- Protocol-relative URL, should adopt the base URL's protocol -->
             <img src="//cdn.com/protocol_relative.gif">
             <!-- A data URI, which should be ignored as it's not a downloadable link -->
-            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+            <img src="data:image/gif;base64,
+            R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
             <!-- A tag with no src attribute -->
             <img>
         </body>

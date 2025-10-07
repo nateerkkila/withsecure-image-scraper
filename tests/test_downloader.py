@@ -1,4 +1,3 @@
-import pytest
 import requests
 from unittest.mock import mock_open
 from image_scraper.downloader import download_images
