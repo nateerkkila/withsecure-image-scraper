@@ -4,7 +4,7 @@ A Python command-line tool to fetch and download all static images from a given 
 
 ## Features
 
-- Fetches all `<img>` source URLs from a webpage.
+- Fetches all `<img>` and `<source>` URLs from a webpage via src and srcset attributes.
 - Handles both relative and absolute image paths.
 - Downloads images to a local directory.
 - Creates a log file (`image_log.txt`) of all successfully fetched URLs.
@@ -12,7 +12,7 @@ A Python command-line tool to fetch and download all static images from a given 
 
 ## Assumptions
 
-1.  **Image Sources:** The scraper only targets `<img>` tags. It does not parse CSS or JavaScript for images.
+1.  **Image Sources:** The scraper only targets `<img>` and `<source>` tags. It does not parse CSS or JavaScript or Lazy Loaded images.
 2.  **URL Handling:** The tool resolves relative URLs but ignores non-downloadable `data:` URIs.
 3.  **Output:** Downloads are saved to a `./downloaded_images/` directory by default, which is created if it does not exist.
 4.  **Error Handling:** The tool skips images that fail to download due to network or file system errors and continues processing the rest.

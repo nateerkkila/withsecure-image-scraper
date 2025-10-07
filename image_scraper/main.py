@@ -1,6 +1,10 @@
 import argparse
+import logging
 from .scraper import get_image_urls
 from .downloader import download_images
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -31,20 +35,22 @@ def main():
 
     args = parser.parse_args()
 
-    # --- Main Logic ---
-    print(f"Starting image scraper for: {args.url}")
+    # MAIN LOGIC
+    logger.info(f"Starting image scraper for: {args.url}")
 
-    # 1. Scrape the webpage to get image URLs
+    # Scrape the webpage to get image URLs
     image_urls = get_image_urls(args.url)
 
     if not image_urls:
-        print("No images found on the page or an error occurred during scraping.")
+        logger.warning(
+            "No images found on the page or an error occurred during scraping."
+        )
         return
 
-    # 2. Download the found images
+    # Download the found images
     download_images(image_urls, args.output_dir)
 
-    print("\nScraping and downloading process completed.")
+    logger.info("Scraping and downloading process completed.")
 
 
 if __name__ == "__main__":
