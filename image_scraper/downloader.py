@@ -1,5 +1,7 @@
 import os
 import requests
+import hashlib
+import mimetypes
 from typing import List
 from urllib.parse import urlparse
 
@@ -25,10 +27,22 @@ def download_images(image_urls: List[str], dest_dir: str) -> None:
             response = requests.get(url, stream=True, timeout=15)
             response.raise_for_status()
 
-            # Generate a safe filename from the url.
-            filename = os.path.basename(urlparse(url).path)
-            if not filename:  # Handle cases where URL ends in a slash
-                filename = "downloaded_image_" + url.split("/")[-2]
+            content_type = response.headers.get("Content-Type", "").lower()
+            if not content_type.startswith("image/"):
+                print(f"  Skipped: {url} (not an image, content-type: {content_type})")
+                continue
+
+            basename = os.path.basename(urlparse(url).path) or "image"
+            name_part, ext = os.path.splitext(basename)
+
+            # If the URL has no extension, try to guess from content-type.
+            if not ext:
+                ext = mimetypes.guess_extension(content_type) or ".img"
+
+            # Generate a short hash from the full URL to ensure uniqueness.
+            url_hash = hashlib.sha256(url.encode("utf-8")).hexdigest()[:8]
+
+            filename = f"{name_part}-{url_hash}{ext}"
 
             file_path = os.path.join(dest_dir, filename)
             with open(file_path, "wb") as f:
@@ -51,6 +65,10 @@ def _log_successful_downloads(urls: List[str], dest_dir: str) -> None:
     Writes a list of URLs to a log file.
     This is a helper function intended for internal use within this module.
     """
+    if not urls:
+        print("\nNo images were successfully downloaded, skipping log file creation.")
+        return
+
     log_path = os.path.join(dest_dir, "image_log.txt")
 
     try:
