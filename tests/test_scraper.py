@@ -2,6 +2,7 @@ import pytest
 import requests
 from image_scraper.scraper import get_image_urls
 
+
 def test_get_image_urls_success(mocker, mock_response_class):
     """
     Tests that the function extracts expected image URLs, ignoring duplicates and empty src tags.
@@ -20,8 +21,8 @@ def test_get_image_urls_success(mocker, mock_response_class):
     </html>
     """
     base_url = "https://example.com"
-    
-    mock_get = mocker.patch('requests.get')
+
+    mock_get = mocker.patch("requests.get")
     mock_get.return_value = mock_response_class(text=test_html)
 
     actual_urls = get_image_urls(base_url)
@@ -33,18 +34,20 @@ def test_get_image_urls_success(mocker, mock_response_class):
 
     assert set(actual_urls) == expected_urls
 
+
 def test_get_image_urls_network_error(mocker):
     """
     Tests that the function returns an empty list when a network error occurs.
     """
     base_url = "https://example.com"
 
-    mock_get = mocker.patch('requests.get')
+    mock_get = mocker.patch("requests.get")
     mock_get.side_effect = requests.exceptions.RequestException("Connection timed out")
 
     actual_urls = get_image_urls(base_url)
 
     assert actual_urls == []
+
 
 def test_get_image_urls_no_images_found(mocker, mock_response_class):
     """
@@ -52,13 +55,14 @@ def test_get_image_urls_no_images_found(mocker, mock_response_class):
     """
     test_html = "<html><body><p>This is a page with no images.</p></body></html>"
     base_url = "https://noimages.com"
-    
-    mock_get = mocker.patch('requests.get')
+
+    mock_get = mocker.patch("requests.get")
     mock_get.return_value = mock_response_class(text=test_html)
 
     actual_urls = get_image_urls(base_url)
 
     assert actual_urls == []
+
 
 def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
     """
@@ -81,8 +85,8 @@ def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
     </html>
     """
     base_url = "https://example.com"
-    
-    mock_get = mocker.patch('requests.get')
+
+    mock_get = mocker.patch("requests.get")
     mock_get.return_value = mock_response_class(text=test_html)
 
     actual_urls = get_image_urls(base_url)
@@ -90,7 +94,7 @@ def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
     expected_urls = {
         "https://example.com/images/relative.jpg",
         "http://cdn.com/absolute.png",
-        "https://cdn.com/protocol_relative.gif"
+        "https://cdn.com/protocol_relative.gif",
     }
 
     assert set(actual_urls) == expected_urls

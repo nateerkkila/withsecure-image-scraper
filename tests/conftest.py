@@ -3,9 +3,11 @@
 import pytest
 import requests
 
+
 @pytest.fixture
 def mock_response_class():
     """Provides a reusable MockResponse class for testing."""
+
     class MockResponse:
         def __init__(self, text="", content=b"", status_code=200):
             self.text = text
@@ -18,5 +20,5 @@ def mock_response_class():
 
         def iter_content(self, chunk_size=8192):
             yield self.content
-            
+
     return MockResponse
