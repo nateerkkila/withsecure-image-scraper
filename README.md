@@ -2,6 +2,8 @@
 
 A Python command-line tool to fetch and download all static images from a given webpage.
 
+- Sample line to test pipeline
+
 ## Features
 
 - Fetches all `<img>` source URLs from a webpage.

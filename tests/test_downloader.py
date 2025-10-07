@@ -1,20 +1,17 @@
-import pytest
 import requests
 from unittest.mock import mock_open
 from image_scraper.downloader import download_images
+
 
 def test_download_images_success(mocker, tmp_path, mock_response_class):
     """
     Tests the successful download and logging of multiple images.
     """
     dest_dir = tmp_path / "test_output"
-    image_urls = [
-        "https://example.com/image1.jpg",
-        "https://example.com/logo.png"
-    ]
-    fake_image_bytes = b'fake-image-data'
-    
-    mock_get = mocker.patch('requests.get')
+    image_urls = ["https://example.com/image1.jpg", "https://example.com/logo.png"]
+    fake_image_bytes = b"fake-image-data"
+
+    mock_get = mocker.patch("requests.get")
     mock_get.return_value = mock_response_class(content=fake_image_bytes)
 
     download_images(image_urls, str(dest_dir))
@@ -28,7 +25,11 @@ def test_download_images_success(mocker, tmp_path, mock_response_class):
     assert image2_path.exists()
     assert image1_path.read_bytes() == fake_image_bytes
     assert log_file.exists()
-    assert log_file.read_text() == "https://example.com/image1.jpg\nhttps://example.com/logo.png\n"
+    assert (
+        log_file.read_text()
+        == "https://example.com/image1.jpg\nhttps://example.com/logo.png\n"
+    )
+
 
 def test_download_images_network_failure(mocker, tmp_path, mock_response_class):
     """
@@ -37,13 +38,13 @@ def test_download_images_network_failure(mocker, tmp_path, mock_response_class):
     dest_dir = tmp_path / "test_output"
     image_urls = [
         "https://example.com/good_image.jpg",
-        "https://example.com/bad_image.png"
+        "https://example.com/bad_image.png",
     ]
 
-    mock_get = mocker.patch('requests.get')
+    mock_get = mocker.patch("requests.get")
     mock_get.side_effect = [
-        mock_response_class(content=b'good-data'),
-        requests.exceptions.RequestException("Network Error")
+        mock_response_class(content=b"good-data"),
+        requests.exceptions.RequestException("Network Error"),
     ]
 
     download_images(image_urls, str(dest_dir))
@@ -55,6 +56,7 @@ def test_download_images_network_failure(mocker, tmp_path, mock_response_class):
     assert log_file.exists()
     assert log_file.read_text() == "https://example.com/good_image.jpg\n"
 
+
 def test_download_images_file_write_error(mocker, tmp_path, mock_response_class):
     """
     Tests that the downloader handles an IOError when trying to save a file.
@@ -62,11 +64,13 @@ def test_download_images_file_write_error(mocker, tmp_path, mock_response_class)
     dest_dir = tmp_path / "test_output"
     image_urls = ["https://example.com/image.jpg"]
 
-    mock_get = mocker.patch('requests.get')
-    mock_get.return_value = mock_response_class(content=b'some-data')
+    mock_get = mocker.patch("requests.get")
+    mock_get.return_value = mock_response_class(content=b"some-data")
 
     # Mock the built-in `open` function to raise an IOError
-    mocker.patch('builtins.open', mock_open()).side_effect = IOError("Permission denied")
+    mocker.patch("builtins.open", mock_open()).side_effect = IOError(
+        "Permission denied"
+    )
 
     download_images(image_urls, str(dest_dir))
 
