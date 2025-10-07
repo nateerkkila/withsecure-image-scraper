@@ -1,8 +1,10 @@
 import requests
+import logging
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-
 from typing import List
+
+logger = logging.getLogger(__name__)
 
 
 def get_image_urls(page_url: str) -> List[str]:
@@ -23,7 +25,7 @@ def get_image_urls(page_url: str) -> List[str]:
         response = requests.get(page_url, timeout=10)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error: Could not fetch URL {page_url}. Reason: {e}")
+        logger.error(f"Could not fetch URL {page_url}. Reason: {e}")
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")
