@@ -16,6 +16,7 @@ A Python command-line tool to fetch and download all static images from a given 
 2.  **URL Handling:** The tool resolves relative URLs but ignores non-downloadable `data:` URIs.
 3.  **Output:** Downloads are saved to a `./downloaded_images/` directory by default, which is created if it does not exist.
 4.  **Error Handling:** The tool skips images that fail to download due to network or file system errors and continues processing the rest.
+5.  **Environment:** This tool has been developed and tested on a Linux-based environment. While the code uses cross-platform libraries, its behavior is only guaranteed on Linux.
 
 ## Setup & Installation
 
