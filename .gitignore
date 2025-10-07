@@ -25,3 +25,8 @@ google_logos/
 dist/
 build/
 *.egg-info/
+
+# Test coverage data
+.coverage
+htmlcov/
+coverage.xml
