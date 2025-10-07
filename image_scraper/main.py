@@ -31,7 +31,7 @@ def main():
 
     args = parser.parse_args()
 
-    # --- Main Application Logic ---
+    # --- Main Logic ---
     print(f"Starting image scraper for: {args.url}")
 
     # 1. Scrape the webpage to get image URLs

@@ -2,53 +2,41 @@ import pytest
 import requests
 from image_scraper.scraper import get_image_urls
 
-class MockResponse:
-    def __init__(self, text, status_code):
-        self.text = text
-        self.status_code = status_code
+def test_get_image_urls_success(mocker, mock_response_class):
+    """
+    Tests that the function extracts expected image URLs, ignoring duplicates and empty src tags.
+    """
+    test_html = """
+    <html>
+        <body>
+            <h1>Hello World</h1>
+            <img src="/images/logo.png">
+            <img src="https://example.com/images/banner.jpg">
+            <!-- This one is a duplicate and should be ignored -->
+            <img src="/images/logo.png">
+            <!-- This one has an empty src -->
+            <img src="">
+        </body>
+    </html>
+    """
+    base_url = "https://example.com"
+    
+    mock_get = mocker.patch('requests.get')
+    mock_get.return_value = mock_response_class(text=test_html)
 
-    def raise_for_status(self):
-        if self.status_code >= 400:
-            raise requests.exceptions.HTTPError(f"HTTP Error {self.status_code}")
-        
+    actual_urls = get_image_urls(base_url)
 
-def test_get_image_urls_success(mocker):
+    expected_urls = {
+        "https://example.com/images/logo.png",
+        "https://example.com/images/banner.jpg",
+    }
 
-        test_html = """
-        <html>
-            <body>
-                <h1>Hello World</h1>
-                <img src="/images/logo.png">
-                <img src="https://example.com/images/banner.jpg">
-                <!-- This one is a duplicate and should be ignored -->
-                <img src="/images/logo.png">
-                <!-- This one has an empty src -->
-                <img src="">
-            </body>
-        </html>
-        """
-
-        base_url = "https://example.com"
-
-        mock_get = mocker.patch('requests.get')
-        mock_get.return_value = MockResponse(test_html, 200)
-
-        actual_urls = get_image_urls(base_url)
-
-        expected_urls = {
-            "https://example.com/images/logo.png",
-            "https://example.com/images/banner.jpg",
-        }
-
-        # set comparison to ignore order
-        assert set(actual_urls) == expected_urls
+    assert set(actual_urls) == expected_urls
 
 def test_get_image_urls_network_error(mocker):
     """
-    Tests the failure path: ensures the function returns an empty list
-    when a network error occurs.
+    Tests that the function returns an empty list when a network error occurs.
     """
-    
     base_url = "https://example.com"
 
     mock_get = mocker.patch('requests.get')
@@ -56,35 +44,26 @@ def test_get_image_urls_network_error(mocker):
 
     actual_urls = get_image_urls(base_url)
 
-    # assert graceful error handling
     assert actual_urls == []
 
-def test_get_image_urls_no_images_found(mocker):
+def test_get_image_urls_no_images_found(mocker, mock_response_class):
     """
     Tests that an empty list is returned for a page with no <img> tags.
     """
-    
-    test_html = """
-    <html>
-        <body>
-            <p>This is a page with no images.</p>
-        </body>
-    </html>
-    """
+    test_html = "<html><body><p>This is a page with no images.</p></body></html>"
     base_url = "https://noimages.com"
     
     mock_get = mocker.patch('requests.get')
-    mock_get.return_value = MockResponse(test_html, 200)
+    mock_get.return_value = mock_response_class(text=test_html)
 
     actual_urls = get_image_urls(base_url)
 
     assert actual_urls == []
 
-def test_get_image_urls_handles_various_formats(mocker):
+def test_get_image_urls_handles_various_formats(mocker, mock_response_class):
     """
     Tests that the scraper correctly handles various URL formats and ignores invalid ones.
     """
-    
     test_html = """
     <html>
         <body>
@@ -104,14 +83,14 @@ def test_get_image_urls_handles_various_formats(mocker):
     base_url = "https://example.com"
     
     mock_get = mocker.patch('requests.get')
-    mock_get.return_value = MockResponse(test_html, 200)
+    mock_get.return_value = mock_response_class(text=test_html)
 
     actual_urls = get_image_urls(base_url)
 
     expected_urls = {
         "https://example.com/images/relative.jpg",
-        "http://cdn.com/absolute.png", # retains http
-        "https://cdn.com/protocol_relative.gif" # becomes https
+        "http://cdn.com/absolute.png",
+        "https://cdn.com/protocol_relative.gif"
     }
 
     assert set(actual_urls) == expected_urls
