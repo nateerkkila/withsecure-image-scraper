@@ -9,6 +9,7 @@ A Python command-line tool to fetch and download all static images from a given 
 - Downloads images to a local directory.
 - Creates a log file (`image_log.txt`) of all successfully fetched URLs.
 - Includes a test suite using `pytest`.
+- A CI validation workflow using GitHub Actions to enforce linting, testing, and coverage standards.
 
 ## Assumptions
 
@@ -70,3 +71,9 @@ To run the full test suite, execute the following command from the project's roo
 ```bash
 pytest
 ```
+
+## CI Pipeline
+
+A CI validation workflow using GitHub Actions is setup and defined in .github/workflows/ci-validation.yml. You can see the pipeline in action when a pull request is created against main branch, in the 'Checks' tab. 
+
+Note that this is for the Part 2 'bonus' of the takehome, and is not the fully designed pipeline for part 2.
