@@ -50,7 +50,7 @@ def main():
     # Download the found images
     download_images(image_urls, args.output_dir)
 
-    logger.info("Scraping and downloading process completed.")
+    logger.info(   "Scraping and downloading process completed.")
 
 
 if __name__ == "__main__":
